@@ -1,0 +1,31 @@
+for (i=0; i < liczba_wierzcholkow-1; i++){
+    for each krawedz(u,v){
+        if (d(v) > d(u) + w(u,v)){
+            d(v) = d(u) + w(u,v)
+            pi(v) = u
+        }
+    }
+}
+
+
+
+---------------
+
+macierz
+            poczatek 0 1 2 3 4 5
+
+|
+v
+koniec
+0
+1
+2
+3
+4
+5
+
+
+--------------
+
+pi to są poprzedniki i mając poprzednik można prześledzić ścieżkę
+d to jest wartość - i mając tablicę wartości można je sobie dopiero zsumować, ale my tego nie chcemy robić - tylko tablica
