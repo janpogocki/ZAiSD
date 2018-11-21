@@ -11,7 +11,10 @@ const int NIL = -9999999;
 int *d;
 int *pi;
 
-int n;
+// edges vertices (file 1st line)
+int edges;
+int vertices;
+
 int *prevArr;
 int *nextArr;
 int *edgesArr;
@@ -20,13 +23,13 @@ int **matrixArr;
 int printArrays(){
     cout << "Array d:\n";
 
-    for (int i=0; i < sizeof(d)-2; i++){
+    for (int i=0; i < vertices; i++){
         cout << d[i] << " ";
     }
 
     cout << "\n\nArray pi:\n";
 
-    for (int i=0; i < sizeof(pi)-2; i++) {
+    for (int i=0; i < vertices; i++) {
         if (pi[i] == NIL)
             cout << "NIL ";
         else
@@ -73,8 +76,19 @@ int convertFromList(string filename){
         while (getline(file, line)) {
 
             if (i == 0) {
-                n = atoi(line.c_str());
-                allocateArrays(n);
+                istringstream ssin(line);
+                int j = 0;
+                string token;
+
+                while (getline(ssin, token, ' ')){
+                    lineToSplit[j] = token;
+                    j++;
+                }
+
+                edges = atoi(lineToSplit[0].c_str());
+                vertices = atoi(lineToSplit[1].c_str());
+
+                allocateArrays(edges);
             }
             else {
                 istringstream ssin(line);
@@ -102,11 +116,11 @@ int convertFromList(string filename){
 int runList(){
     convertFromList("D:\\C\\ZAiSD\\lab1\\list.txt");
 
-    for (int i = 0; i < n-1; i++){
+    for (int i = 0; i < vertices-1; i++){
 
-        for (int j = 0; j < n; j++){
+        for (int j = 0; j < edges; j++){
 
-            if (d[nextArr[j]] > d[prevArr[j]] + edgesArr[j]){
+            if (d[prevArr[j]] != INF && d[nextArr[j]] > d[prevArr[j]] + edgesArr[j]){
                 d[nextArr[j]] = d[prevArr[j]] + edgesArr[j];
                 pi[nextArr[j]] = prevArr[j];
             }
@@ -130,8 +144,19 @@ int convertFromMatrix(string filename){
         while (getline(file, line)) {
 
             if (i == 0) {
-                n = atoi(line.c_str());
-                allocateArrays(n);
+                istringstream ssin(line);
+                int j = 0;
+                string token;
+
+                while (getline(ssin, token, ' ')){
+                    lineToSplit[j] = token;
+                    j++;
+                }
+
+                edges = atoi(lineToSplit[0].c_str());
+                vertices = atoi(lineToSplit[1].c_str());
+
+                allocateArrays(edges);
             }
             else {
                 istringstream ssin(line);
@@ -143,7 +168,7 @@ int convertFromMatrix(string filename){
                     j++;
                 }
 
-                for (int k=0; k<n; k++){
+                for (int k=0; k<edges; k++){
                     if (lineToSplit[k] == "*")
                         matrixArr[k][i-1] = NIL;
                     else
@@ -162,11 +187,11 @@ int convertFromMatrix(string filename){
 int runMatrix(){
     convertFromMatrix("D:\\C\\ZAiSD\\lab1\\matrix.txt");
 
-    for (int i = 0; i < n-1; i++){
+    for (int i = 0; i < vertices-1; i++){
 
-        for (int j = 0; j < n; j++){
+        for (int j = 0; j < vertices; j++){
 
-            for (int k = 0; k < n; k++){
+            for (int k = 0; k < vertices; k++){
 
                 if (matrixArr[j][k] != NIL
                         && d[k] > d[j] + matrixArr[j][k]){
