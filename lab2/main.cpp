@@ -22,6 +22,10 @@ int *nextArr;
 int *edgesArr;
 int **matrixArr;
 
+int findPath();
+int findPathMatrix();
+int calculateFlow(int destination);
+
 int printArrays(){
     cout << "Array d:\n";
 
@@ -63,6 +67,8 @@ int allocateGraphArrays(int n){
     prevArr = new int[n];
     nextArr = new int[n];
     edgesArr = new int[n];
+
+    return 0;
 }
 
 int allocateMatrix(int n){
@@ -122,34 +128,60 @@ int convertFromList(string filename){
     return 0;
 }
 
-int findPath();
-int findPathMatrix();
-
-bool isPathExists(int destination){
+int convertFromMatrix(string filename){
     allocateArrays(edges+10000);
-    findPath();
+    allocateMatrix(edges+10000);
 
-    if (d[destination] != INF){
-        return true;
+    int i = 0;
+    string lineToSplit[256];
+
+    ifstream file(filename);
+    if (file.is_open()) {
+        string line;
+        while (getline(file, line)) {
+
+            if (i == 0) {
+                istringstream ssin(line);
+                int j = 0;
+                string token;
+
+                while (getline(ssin, token, ' ')){
+                    lineToSplit[j] = token;
+                    j++;
+                }
+
+                edges = atoi(lineToSplit[0].c_str());
+                vertices = atoi(lineToSplit[1].c_str());
+
+                allocateArrays(edges+10000);
+            }
+            else {
+                istringstream ssin(line);
+                int j = 0;
+                string token;
+
+                while (getline(ssin, token, ' ')){
+                    lineToSplit[j] = token;
+                    j++;
+                }
+
+                for (int k=0; k<edges; k++){
+                    if (lineToSplit[k] == "*")
+                        matrixArr[k][i-1] = NIL;
+                    else
+                        matrixArr[k][i-1] = atoi(lineToSplit[k].c_str());
+                }
+            }
+
+            i++;
+        }
+        file.close();
     }
-    else {
-        return false;
-    }
+
+    return 0;
 }
 
-bool isPathExistsMatrix(int destination){
-    allocateArrays(edges+10000);
-    findPathMatrix();
-
-    if (d[destination] != INF){
-        return true;
-    }
-    else {
-        return false;
-    }
-}
-
-int calculateFlow(int destination);
+/********* LIST **********/
 
 int findPath(){
     for (int i = 0; i < vertices-1; i++){
@@ -164,19 +196,15 @@ int findPath(){
         }
 
     }
-}
-
-int runList(){
-    convertFromList("D:\\C\\ZAiSD\\lab2\\list2.txt");
-
-    findPath();
-
-    //printArrays();
-
-    calculateFlow(3); //todo destinantion
-
 
     return 0;
+}
+
+bool isPathExists(int destination){
+    allocateArrays(edges+10000);
+    findPath();
+
+    return d[destination] != INF;
 }
 
 int getEdge(int a, int b){
@@ -234,63 +262,22 @@ int calculateFlow(int destination){
 
         maxFlow += pathFlow;
     }
-    cout << "PRZEPUSTOWOSC: " << maxFlow << "\n";
+    cout << "PRZEPUSTOWOSC LISTY: " << maxFlow << "\n";
 
     return 0;
 }
 
-int convertFromMatrix(string filename){
-    allocateArrays(edges+10000);
-    allocateMatrix(edges+10000);
+int runList(int destination){
+    convertFromList("D:\\C\\ZAiSD\\lab2\\list.txt");
 
-    int i = 0;
-    string lineToSplit[256];
+    findPath();
 
-    ifstream file(filename);
-    if (file.is_open()) {
-        string line;
-        while (getline(file, line)) {
-
-            if (i == 0) {
-                istringstream ssin(line);
-                int j = 0;
-                string token;
-
-                while (getline(ssin, token, ' ')){
-                    lineToSplit[j] = token;
-                    j++;
-                }
-
-                edges = atoi(lineToSplit[0].c_str());
-                vertices = atoi(lineToSplit[1].c_str());
-
-                allocateArrays(edges+10000);
-            }
-            else {
-                istringstream ssin(line);
-                int j = 0;
-                string token;
-
-                while (getline(ssin, token, ' ')){
-                    lineToSplit[j] = token;
-                    j++;
-                }
-
-                for (int k=0; k<edges; k++){
-                    if (lineToSplit[k] == "*")
-                        matrixArr[k][i-1] = NIL;
-                    else
-                        matrixArr[k][i-1] = atoi(lineToSplit[k].c_str());
-                }
-            }
-
-            i++;
-        }
-        file.close();
-    }
+    calculateFlow(destination);
 
     return 0;
 }
+
+/********* MATRIX **********/
 
 int findPathMatrix(){
     for (int i = 0; i < vertices-1; i++){
@@ -299,10 +286,7 @@ int findPathMatrix(){
 
             for (int k = 0; k < vertices; k++){
 
-                if (d[j] != INF
-                    &&matrixArr[j][k] != NIL
-                    && d[k] > d[j] + matrixArr[j][k]
-                    && matrixArr[j][k] != 0){
+                if (d[j] != INF && matrixArr[j][k] != NIL && d[k] > d[j] + matrixArr[j][k] && matrixArr[j][k] != 0){
                     d[k] = d[j] + matrixArr[j][k];
                     pi[k] = j;
                 }
@@ -314,6 +298,13 @@ int findPathMatrix(){
     }
 
     return 0;
+}
+
+bool isPathExistsMatrix(int destination){
+    allocateArrays(edges+10000);
+    findPathMatrix();
+
+    return d[destination] != INF;
 }
 
 int calculateFlowMatrix(int destination){
@@ -333,28 +324,28 @@ int calculateFlowMatrix(int destination){
         }
         maxFlow += pathFlow;
     }
-    cout << "PRZEPISTOWOSC MACIERZY: " << maxFlow << "\n";
-}
-
-int runMatrix(){
-    convertFromMatrix("D:\\C\\ZAiSD\\lab2\\matrix.txt");
-
-    findPathMatrix();
-    calculateFlowMatrix(2);
-
-    //printArrays();
+    cout << "PRZEPUSTOWOSC MACIERZY: " << maxFlow << "\n";
 
     return 0;
 }
 
+int runMatrix(int destination){
+    convertFromMatrix("D:\\C\\ZAiSD\\lab2\\matrix.txt");
+    findPathMatrix();
+
+    calculateFlowMatrix(destination);
+
+    return 0;
+}
+
+/* --------------------- */
+
 int main() {
-    runList();
+    runList(2);
 
-    cout << "-----------------------\n\n";
+    cout << "-----------------------" << endl;
 
-
-    runMatrix();
-    //runList();
+    runMatrix(2);
 
     return 0;
 }
