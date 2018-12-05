@@ -237,6 +237,7 @@ int calculateFlow(int destination){
             int edge = getEdge(p, next);
             pathFlow = min(pathFlow, edge);
         }
+
         for (int next = destination; next != 0; next = pi[next]) {
             p = pi[next];
 
@@ -317,10 +318,18 @@ int calculateFlowMatrix(int destination){
             p = pi[k];
             pathFlow = min(pathFlow, matrixArr[p][k]);
         }
+
         for (int k = destination; k != 0; k = pi[k]) {
             p = pi[k];
             matrixArr[p][k] -= pathFlow;
-            matrixArr[k][p] += pathFlow;
+
+            if (matrixArr[k][p] == NIL){
+                matrixArr[k][p] = pathFlow;
+
+            }
+            else {
+                matrixArr[k][p] += pathFlow;
+            }
         }
         maxFlow += pathFlow;
     }
