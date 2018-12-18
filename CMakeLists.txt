@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.6)
 project(ZAiSD)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -14,3 +14,5 @@ add_executable(lab3_main3 lab3/main3.cpp)
 add_executable(lab3_main4 lab3/main4.cpp)
 add_executable(lab3_main5 lab3/main5.cpp)
 add_executable(lab3_main6 lab3/main6.cpp)
+
+add_executable(lab4_main lab4/main.cpp)
