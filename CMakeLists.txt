@@ -16,3 +16,6 @@ add_executable(lab3_main5 lab3/main5.cpp)
 add_executable(lab3_main6 lab3/main6.cpp)
 
 add_executable(lab4_main lab4/main.cpp)
+
+add_executable(lab5_encoder lab5/encoder.cpp)
+add_executable(lab5_decoder lab5/decoder.cpp)
